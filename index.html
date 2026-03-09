@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>チーム進捗表示</title>
+
+  <link rel="stylesheet" href="style.css">
+
+  <!-- favicon -->
+  <link rel="icon" href="./favicon.png" type="image/png">
+  <link rel="icon" href="./favicon-32.png" sizes="32x32" type="image/png">
+  <link rel="icon" href="./favicon-48.png" sizes="48x48" type="image/png">
+
+  <!-- PWA -->
+  <link rel="manifest" href="./manifest.json">
+  <meta name="theme-color" content="#7aa6c2">
+</head>
+
+<body>
+
+<!-- =====================
+  プレイヤー登録画面
+===================== -->
+<div id="registerScreen">
+  <h2>プレイヤー登録</h2>
+
+  <p id="needRegisterMsg" style="color:#555;">
+    ゲームを始めるには、まず登録してください
+  </p>
+
+  <p>名前：</p>
+  <input type="text" id="playerName" placeholder="名前を入力">
+
+  <p>所属チーム：</p>
+  <select id="teamSelect">
+    <option value="A">Aチーム</option>
+    <option value="B">Bチーム</option>
+  </select>
+
+  <br><br>
+  <button id="registerBtn">決定</button>
+</div>
+
+<!-- =====================
+  ゲーム画面
+===================== -->
+<div id="gameScreen" style="display:none;">
+
+  <!-- ===== メニュー ===== -->
+  <div id="menuBar">
+<button onclick="showPage('progress'); floatingMenu.classList.add('hidden')">
+  進捗
+</button>
+
+<button onclick="showPage('members'); floatingMenu.classList.add('hidden')">
+  メンバー
+</button>
+
+<button onclick="showPage('map'); floatingMenu.classList.add('hidden')">
+  マップ
+</button>
+
+
+  </div>
+
+  <p id="myTeamLabel"></p>
+
+  <!-- =====================
+    進捗ページ
+  ===================== -->
+  <div id="page-progress" class="page">
+
+    <h1>チーム進捗</h1>
+
+    <!-- ===== Aチーム ===== -->
+    <div class="team team-a">
+      <h2>
+      <span id="teamA-name">Aチーム</span>
+      <button class="editTeamNameBtn" data-team="A">チーム名変更</button>
+    </h2>
+
+      <p>現在地：<span id="teamA-position">---</span></p>
+      <p>救済措置：<span id="reliefA">未選択</span></p>
+      <p id="teamA-arrival">到着予定駅: -</p>
+      <p>🎲 サイコロ結果：<span id="diceResultA">-</span></p>
+
+      <div id="reliefSelectA">
+        <p>救済措置を選んでください</p>
+        <button onclick="selectRelief('A','PLUS3')">3・3・3</button>
+        <button onclick="selectRelief('A','DOUBLE')">ダブル</button>
+        <button onclick="selectRelief('A','PLUS1')">＋1</button>
+      </div>
+
+      <button id="rollDiceBtnA">サイコロを振る</button>
+      <button id="plus3BtnA">＋3しますか？</button>
+      <button id="doubleBtnA">2倍にしますか？</button>
+      <button id="arriveBtnA">駅に到着</button>
+
+      <input type="number" id="walkA" placeholder="歩いた駅数">
+      <button id="addWalkA">加算</button>
+      <button id="undoBtnA">Aチームを戻す</button>
+
+      <p>⏳ 残り時間：<span id="waitA">-</span></p>
+      <div id="teamA-remaining"></div>
+    </div>
+
+    <!-- ===== Bチーム ===== -->
+    <div class="team team-b">
+      <h2>
+        <span id="teamB-name">Bチーム</span>
+        <button class="editTeamNameBtn" data-team="B">チーム名変更</button>
+      </h2>
+
+      <p>現在地：<span id="teamB-position">---</span></p>
+      <p>救済措置：<span id="reliefB">未選択</span></p>
+      <p id="teamB-arrival">到着予定駅: -</p>
+      <p>🎲 サイコロ結果：<span id="diceResultB">-</span></p>
+
+      <div id="reliefSelectB">
+        <p>救済措置を選んでください</p>
+        <button onclick="selectRelief('B','PLUS3')">3・3・3</button>
+        <button onclick="selectRelief('B','DOUBLE')">ダブル</button>
+        <button onclick="selectRelief('B','PLUS1')">＋1</button>
+      </div>
+
+      <button id="rollDiceBtnB">サイコロを振る</button>
+      <button id="plus3BtnB">＋3しますか？</button>
+      <button id="doubleBtnB">2倍にしますか？</button>
+      <button id="arriveBtnB">駅に到着</button>
+
+      <input type="number" id="walkB" placeholder="歩いた駅数">
+      <button id="addWalkB">加算</button>
+      <button id="undoBtnB">Bチームを戻す</button>
+
+      <p>⏳ 残り時間：<span id="waitB">-</span></p>
+      <div id="teamB-remaining"></div>
+    </div>
+
+  </div>
+
+  <!-- =====================
+    メンバーページ
+  ===================== -->
+  <div id="page-members" class="page" style="display:none;">
+  <div style="display:flex; align-items:center; gap:8px;">
+    <h1 style="margin:0;">メンバー</h1>
+    <button id="editNameBtn">名前を編集</button>
+  </div>
+
+  <div id="nameEditArea" style="display:none; margin:8px 0;">
+    <input type="text" id="nameEditInput" placeholder="新しい名前">
+    <button id="saveNameBtn">保存</button>
+    <button id="cancelNameBtn">キャンセル</button>
+  </div>
+
+   <h2><span id="memberTeamA-name">Aチーム</span></h2>
+   <ul id="memberListA"></ul>
+
+    <h2><span id="memberTeamB-name">Bチーム</span></h2>
+    <ul id="memberListB"></ul>
+
+    <hr>
+
+    <h2>全体チャット</h2>
+    <div id="chatLog" style="height:200px; overflow-y:auto; background:#fff; padding:8px;"></div>
+
+    <textarea id="chatInput" rows="3" style="width:100%;" placeholder="メッセージを入力"></textarea>
+    <button id="sendChatBtn">送信</button>
+  </div>
+
+  <!-- =====================
+    マップページ
+  ===================== -->
+  <div id="page-map" class="page" style="display:none;">
+    <h1>マップ</h1>
+
+    <div id="mapContainer"></div>
+  </div>
+
+
+  <!-- 右上メニューボタン -->
+   <button id="menuToggleBtn">☰</button>
+
+  <!-- 右上メニュー -->
+  <div id="floatingMenu">
+    <button onclick="showPage('progress')">進捗</button>
+    <button onclick="showPage('members')">メンバー</button>
+    <button onclick="showPage('map'); floatingMenu.classList.add('hidden')">マップ</button>
+
+  </div>
+
+
+</div>
+
+<!-- =====================
+  乗り換えオーバーレイ
+===================== -->
+<div id="overlay" class="overlay">
+  <div class="overlay-box">
+    <div id="overlayText">
+      <span class="transfer-main"></span>
+      <span class="transfer-sub"></span>
+    </div>
+    <button id="overlayCloseBtn">OK</button>
+  </div>
+</div>
+
+<!-- =====================
+  サイコロオーバーレイ
+===================== -->
+<div id="diceOverlay" class="overlay">
+  <div id="diceWrapper">
+    <img id="diceGif" src="./dice_roll_8.gif" alt="dice"
+      style="width:140px; display:none; cursor:pointer;">
+    <video id="cutinVideo" src="cutin.mp4"
+    class="hidden" style="width:240px;" muted playsinline></video>
+    </div>
+</div>
+
+<!-- Firebase -->
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-database-compat.js"></script>
+
+<script src="script.js"></script>
+
+<audio id="diceSe" src="./dice_roll_se.wav" preload="auto"></audio>
+
+</body>
+</html>
+
+
+
+
